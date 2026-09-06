@@ -9,6 +9,7 @@ import SystemWorkflow from './components/SystemWorkflow'
 import Education from './components/Education'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import VoiceAgent from './components/VoiceAgent'
 
 /**
  * One continuous surface. Sections carry their own hairline separator and
@@ -32,6 +33,8 @@ export default function App() {
       </main>
 
       <Footer />
+
+      <VoiceAgent />
     </>
   )
 }

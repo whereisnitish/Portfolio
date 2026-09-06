@@ -140,6 +140,7 @@ src/
 │   ├── SystemWorkflow.jsx      "From idea to production" — seven stages
 │   ├── Education.jsx           Education and interests
 │   ├── Contact.jsx             Closing statement and channel index
+│   ├── VoiceAgent.jsx          Floating Vapi call button (SDK lazy-loaded)
 │   ├── Footer.jsx
 │   └── ui/
 │       ├── Section.jsx         Section shell: anchor, rhythm, hairline, container
@@ -155,6 +156,7 @@ src/
 │   ├── projects.js             Featured projects (incl. architecture steps)
 │   ├── experience.js           Roles and responsibilities
 │   ├── workflow.js             Build-process stages
+│   ├── voiceAgent.js           Vapi keys and widget copy
 │   └── navigation.js           Nav links and scroll-spy targets
 │
 └── hooks/
@@ -184,6 +186,7 @@ skills, edit the matching file in `src/data/` — no component changes needed.
 | Fonts, spacing, token-to-class mapping | `tailwind.config.js` |
 | System log transcript | `DEFAULT_LINES` in `src/components/ui/TerminalPanel.jsx` |
 | Hero diagram nodes and edges | `NODES` / `EDGES` in `src/components/HeroVisual.jsx` |
+| Voice agent IDs and button copy | `src/data/voiceAgent.js` |
 
 ### Adding a project
 
@@ -221,6 +224,66 @@ Append an object to the `projects` array in `src/data/projects.js`:
   and the diagram stops walking.
 - No images, no icon fonts, no background layers. Scroll listeners are `passive`
   and rAF-throttled.
+
+---
+
+## Voice agent
+
+A floating "Talk to my agent" button sits bottom-right and starts a live voice
+call with a [Vapi](https://vapi.ai) assistant.
+
+`src/components/VoiceAgent.jsx` owns the widget; `src/data/voiceAgent.js` holds the
+IDs and every string it shows.
+
+### How it loads
+
+The Vapi SDK carries a WebRTC stack (~5MB unpacked, 318KB built). Importing it
+normally would roughly double the page weight for a feature most visitors never
+use, so it is `import()`-ed **on the first click**:
+
+```
+initial load   index.js   308KB  (99KB gzip)   ← no Vapi
+first click    vapi.js    318KB  (81KB gzip)   ← fetched on demand
+```
+
+### States
+
+`idle → connecting → active`, plus a transient `error` that clears itself after
+five seconds so the button can never get stuck. While a call is running the button
+shows a timer and a three-bar level meter driven by the SDK's `volume-level`
+event — written straight to the DOM, never through React state, since it fires
+many times a second.
+
+### Configuration
+
+```js
+// src/data/voiceAgent.js
+publicKey:   'ce91db6f-…'   // Vapi PUBLIC key — safe in the bundle by design
+assistantId: 'a039b282-…'
+```
+
+Both can be overridden at build time without touching source:
+
+```bash
+VITE_VAPI_PUBLIC_KEY=…
+VITE_VAPI_ASSISTANT_ID=…
+```
+
+Set those in **Vercel → Settings → Environment Variables** if you want a preview
+deployment pointing at a different assistant. `VITE_*` values are embedded in the
+client bundle — correct for a Vapi *public* key, but never put a Vapi **private**
+key here.
+
+If either value is empty the widget renders nothing, so the site degrades cleanly.
+
+### Notes
+
+- Microphone access needs a secure context. Works on `localhost` and on your
+  Vercel HTTPS domain; plain `http://` on a LAN IP will not prompt.
+- Denied microphone permission lands in the `error` state with a readable hint.
+- The widget sits at `z-20`: above page content, below the navbar (`z-40`) and the
+  mobile menu sheet (`z-30`), so an open menu covers it.
+- `prefers-reduced-motion` stops the spinner and freezes the level meter.
 
 ---
 
