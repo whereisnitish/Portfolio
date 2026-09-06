@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  THEME TOKENS
+  ------------
+  One continuous surface, one neutral ink scale, one accent. `.dark` on <html>
+  swaps the values; every component class stays the same.
+
+  Solid colours are space-separated RGB channels so Tailwind's `<alpha-value>`
+  works (`text-ink-faint/70`). Hairlines are stored as complete colours because
+  they are inherently translucent.
+
+  Contrast: ink-body, ink-muted and ink-faint all clear WCAG AA (4.5:1) against
+  the page ground in both themes. ink-faint is the tightest — verify it if you
+  lighten it.
+*/
+
+@layer base {
+  :root {
+    color-scheme: light;
+
+    --bg: 255 255 255;
+    --bg-surface: 250 250 251;
+
+    --ink-strong: 22 24 29;
+    --ink-body: 68 73 85;
+    --ink-muted: 92 98 112;
+    --ink-faint: 107 114 128;
+
+    --accent: 37 99 235;
+    --on-accent: 255 255 255;
+
+    --line: rgba(22, 24, 29, 0.1);
+    --line-strong: rgba(22, 24, 29, 0.18);
+
+    --nav-offset: 96px;
+  }
+
+  html.dark {
+    color-scheme: dark;
+
+    --bg: 12 13 16;
+    --bg-surface: 18 20 24;
+
+    --ink-strong: 244 245 247;
+    --ink-body: 176 181 191;
+    --ink-muted: 141 147 158;
+    --ink-faint: 122 128 140;
+
+    --accent: 96 165 250;
+    --on-accent: 12 13 16;
+
+    --line: rgba(255, 255, 255, 0.1);
+    --line-strong: rgba(255, 255, 255, 0.18);
+  }
+
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-offset);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--ink-body));
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Theme changes cross-fade. The transition is scoped to the moment of the
+     switch so it never applies to ordinary hover or scroll work. */
+  html.theme-switching,
+  html.theme-switching * {
+    transition:
+      background-color 260ms ease,
+      border-color 260ms ease,
+      color 260ms ease,
+      fill 260ms ease !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  ::selection {
+    background: rgb(var(--accent) / 0.18);
+    color: rgb(var(--ink-strong));
+  }
+
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--ink-faint) / 0.3);
+    border-radius: 999px;
+    border: 3px solid rgb(var(--bg));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--ink-faint) / 0.5);
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: rgb(var(--ink-strong));
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-[1140px] px-6 sm:px-8 lg:px-10;
+  }
+
+  /* Small mono label: section numbers, field names, metadata. */
+  .label {
+    @apply font-mono text-2xs uppercase tracking-label text-ink-faint;
+  }
+
+  /* Text link: the underline appears on hover rather than sitting there. */
+  .link {
+    @apply text-ink-strong underline decoration-transparent decoration-1 underline-offset-4 transition-colors hover:decoration-current;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply btn bg-accent text-on-accent hover:opacity-90;
+  }
+  .btn-secondary {
+    @apply btn border border-line-strong text-ink-strong hover:border-ink-strong;
+  }
+
+  /* Hairline token used for technologies and stacks. */
+  .chip {
+    @apply rounded border border-line px-2 py-1 font-mono text-[0.7rem] text-ink-muted transition-colors;
+  }
+  .chip:hover {
+    @apply border-line-strong text-ink-strong;
+  }
+}
