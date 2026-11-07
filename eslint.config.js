@@ -57,7 +57,7 @@ export default [
 
   {
     // Config files run in Node, not the browser.
-    files: ['*.config.js', 'postcss.config.js', 'tailwind.config.js', 'vite.config.js'],
+    files: ['*.config.js', 'api/**/*.js', 'server/**/*.js'],
     languageOptions: {
       globals: { ...globals.node },
     },

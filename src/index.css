@@ -3,57 +3,83 @@
 @tailwind utilities;
 
 /*
-  THEME TOKENS
-  ------------
-  One continuous surface, one neutral ink scale, one accent. `.dark` on <html>
-  swaps the values; every component class stays the same.
+  THE TWO WORLDS
+  --------------
+  The Notebook (default) is warm paper, pencil red and a serif. The GPU Room
+  (`.dark` on <html>) is a dark rack room, phosphor green and a grotesque. Every
+  component uses the same classes; only these values change.
 
   Solid colours are space-separated RGB channels so Tailwind's `<alpha-value>`
-  works (`text-ink-faint/70`). Hairlines are stored as complete colours because
-  they are inherently translucent.
+  works (`text-ink-faint/70`). Hairlines are complete colours because they are
+  inherently translucent.
 
-  Contrast: ink-body, ink-muted and ink-faint all clear WCAG AA (4.5:1) against
-  the page ground in both themes. ink-faint is the tightest — verify it if you
-  lighten it.
+  Contrast: ink-body, ink-muted, ink-faint and accent all clear WCAG AA (4.5:1)
+  against the ground in both worlds. Re-check them if you change these values.
 */
 
 @layer base {
   :root {
     color-scheme: light;
 
-    --bg: 255 255 255;
-    --bg-surface: 250 250 251;
+    --bg: 245 239 225;
+    --bg-surface: 252 248 238;
 
-    --ink-strong: 22 24 29;
-    --ink-body: 68 73 85;
-    --ink-muted: 92 98 112;
-    --ink-faint: 107 114 128;
+    --ink-strong: 33 28 22;
+    --ink-body: 66 58 48;
+    --ink-muted: 88 78 66;
+    --ink-faint: 107 96 81;
 
-    --accent: 37 99 235;
-    --on-accent: 255 255 255;
+    --accent: 176 54 16;
+    --on-accent: 255 248 235;
 
-    --line: rgba(22, 24, 29, 0.1);
-    --line-strong: rgba(22, 24, 29, 0.18);
+    --line: rgba(33, 28, 22, 0.14);
+    --line-strong: rgba(33, 28, 22, 0.42);
 
-    --nav-offset: 96px;
+    --highlight: rgba(255, 205, 60, 0.5);
+    --tape: rgba(214, 190, 130, 0.62);
+    --sheet-shadow: 0 1px 1px rgba(60, 45, 20, 0.08), 0 14px 30px -14px rgba(60, 45, 20, 0.3);
+
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --display-tracking: -0.025em;
+
+    /* Uneven corners read as a line drawn by hand. */
+    --sketch-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+
+    --ground-pattern:
+      repeating-linear-gradient(to bottom, transparent 0 31px, rgba(70, 90, 130, 0.09) 31px 32px);
+
+    /* Sections carry their own top padding, which already clears the navbar. */
+    --nav-offset: 0px;
   }
 
   html.dark {
     color-scheme: dark;
 
-    --bg: 12 13 16;
-    --bg-surface: 18 20 24;
+    --bg: 10 13 11;
+    --bg-surface: 18 23 19;
 
-    --ink-strong: 244 245 247;
-    --ink-body: 176 181 191;
-    --ink-muted: 141 147 158;
-    --ink-faint: 122 128 140;
+    --ink-strong: 236 245 232;
+    --ink-body: 186 198 182;
+    --ink-muted: 152 166 148;
+    --ink-faint: 128 143 125;
 
-    --accent: 96 165 250;
-    --on-accent: 12 13 16;
+    --accent: 143 255 92;
+    --on-accent: 8 18 6;
 
-    --line: rgba(255, 255, 255, 0.1);
-    --line-strong: rgba(255, 255, 255, 0.18);
+    --line: rgba(190, 255, 170, 0.12);
+    --line-strong: rgba(190, 255, 170, 0.36);
+
+    --highlight: rgba(143, 255, 92, 0.2);
+    --tape: rgba(143, 255, 92, 0.2);
+    --sheet-shadow: 0 0 0 1px rgba(143, 255, 92, 0.08), 0 18px 44px -20px rgba(0, 0, 0, 0.9);
+
+    --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --display-tracking: -0.035em;
+
+    --sketch-radius: 3px;
+
+    --ground-pattern:
+      radial-gradient(circle, rgba(143, 255, 92, 0.09) 1px, transparent 1.5px);
   }
 
   * {
@@ -66,6 +92,18 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Lenis drives the scroll itself, so native smoothing must stay out of its way. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+
   body {
     background-color: rgb(var(--bg));
     color: rgb(var(--ink-body));
@@ -73,15 +111,27 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Theme changes cross-fade. The transition is scoped to the moment of the
-     switch so it never applies to ordinary hover or scroll work. */
-  html.theme-switching,
-  html.theme-switching * {
-    transition:
-      background-color 260ms ease,
-      border-color 260ms ease,
-      color 260ms ease,
-      fill 260ms ease !important;
+  /* Ruled paper in the Notebook, a dot grid in the GPU Room. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: var(--ground-pattern);
+  }
+  html.dark body::before {
+    background-size: 26px 26px;
+  }
+
+  /* The circular wipe animates the incoming world over the outgoing one. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-new(root) {
+    z-index: 2;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -98,7 +148,7 @@
   }
 
   ::selection {
-    background: rgb(var(--accent) / 0.18);
+    background: var(--highlight);
     color: rgb(var(--ink-strong));
   }
 
@@ -131,6 +181,12 @@
     color: rgb(var(--ink-strong));
     text-wrap: balance;
   }
+
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    letter-spacing: var(--display-tracking);
+  }
 }
 
 @layer components {
@@ -138,31 +194,79 @@
     @apply mx-auto w-full max-w-[1140px] px-6 sm:px-8 lg:px-10;
   }
 
-  /* Small mono label: section numbers, field names, metadata. */
+  /* Small mono label: step numbers, field names, metadata. */
   .label {
     @apply font-mono text-2xs uppercase tracking-label text-ink-faint;
   }
 
-  /* Text link: the underline appears on hover rather than sitting there. */
+  /* Handwriting: the person's voice in the margins of the run. */
+  .hand {
+    @apply font-hand text-[1.05rem] leading-snug text-accent;
+  }
+
   .link {
     @apply text-ink-strong underline decoration-transparent decoration-1 underline-offset-4 transition-colors hover:decoration-current;
   }
 
-  .btn {
-    @apply inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium transition-colors;
-  }
-  .btn-primary {
-    @apply btn bg-accent text-on-accent hover:opacity-90;
-  }
-  .btn-secondary {
-    @apply btn border border-line-strong text-ink-strong hover:border-ink-strong;
+  .sketch {
+    border-width: 1.5px;
+    border-color: var(--line-strong);
+    border-radius: var(--sketch-radius);
   }
 
-  /* Hairline token used for technologies and stacks. */
+  .btn {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium transition-transform duration-200 hover:-translate-y-0.5;
+    border-radius: var(--sketch-radius);
+  }
+  .btn-primary {
+    @apply btn bg-accent text-on-accent;
+  }
+  .btn-secondary {
+    @apply btn sketch text-ink-strong;
+  }
+
+  /* A technology name, drawn as a small hand-ruled box. */
   .chip {
-    @apply rounded border border-line px-2 py-1 font-mono text-[0.7rem] text-ink-muted transition-colors;
+    @apply sketch inline-block px-2.5 py-1 font-mono text-[0.7rem] text-ink-muted transition-colors;
+    border-width: 1px;
   }
   .chip:hover {
-    @apply border-line-strong text-ink-strong;
+    @apply animate-wiggle text-ink-strong;
+    border-color: rgb(var(--accent));
+  }
+
+  /* A loose sheet taped to the page. */
+  .sheet {
+    @apply relative bg-surface;
+    box-shadow: var(--sheet-shadow);
+  }
+  .sheet::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    width: 92px;
+    height: 24px;
+    transform: translateX(-50%) rotate(-2deg);
+    background: var(--tape);
+  }
+
+  /* Highlighter stroke behind a phrase. */
+  .marked {
+    background: linear-gradient(
+      to top,
+      transparent 8%,
+      var(--highlight) 8%,
+      var(--highlight) 58%,
+      transparent 58%
+    );
+  }
+
+  /* Rubber stamp. */
+  .stamp {
+    @apply inline-block whitespace-nowrap border-2 border-accent px-2 py-0.5 font-mono text-[0.62rem] font-bold uppercase tracking-[0.14em] text-accent;
+    border-radius: 3px;
+    outline: 1px solid rgb(var(--accent));
+    outline-offset: 1.5px;
   }
 }

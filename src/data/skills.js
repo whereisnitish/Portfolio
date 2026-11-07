@@ -38,8 +38,8 @@ export const skillCategories = [
   {
     id: 'ml',
     title: 'AI / Machine Learning',
-    summary: 'Model work, NLP and computer vision.',
-    items: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'NLP', 'OpenCV', 'MediaPipe'],
+    summary: 'Model work, NLP, computer vision and GPU-based workloads.',
+    items: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'NLP', 'OpenCV', 'MediaPipe', 'GPU Workloads'],
   },
   {
     id: 'cloud',

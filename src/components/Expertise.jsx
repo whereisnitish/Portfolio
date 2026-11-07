@@ -6,18 +6,16 @@ import { skillCategories } from '../data/skills'
 const totalTechnologies = skillCategories.reduce((sum, c) => sum + c.items.length, 0)
 
 /**
- * Technologies as a definition list rather than a grid of cards: the category
- * sits in a fixed left column, its tools wrap in the right. Reads as a
- * reference table, which is the honest shape for this content.
+ * Technologies as the agent's tool registry: the category sits in a fixed left
+ * column, its tools wrap in the right.
  */
 export default function Expertise() {
   return (
     <Section id="expertise">
       <SectionHeading
-        index="03"
-        label="Expertise"
-        title="A working technology ecosystem"
-        lede={`${totalTechnologies} tools across ${skillCategories.length} layers of the stack — the ones I actually reach for, not a checklist.`}
+        stage="expertise"
+        title="The tools I actually reach for."
+        lede={`${totalTechnologies} tools across ${skillCategories.length} layers of the stack. A working kit, not a checklist.`}
       />
 
       <SectionBody className="mt-14">

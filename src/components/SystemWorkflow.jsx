@@ -1,39 +1,47 @@
 import Section from './ui/Section'
 import SectionHeading, { SectionBody } from './ui/SectionHeading'
 import Reveal from './ui/Reveal'
+import Scribble from './ui/Scribble'
 import { workflowStages } from '../data/workflow'
+import { playSound } from '../lib/sound'
 
 /**
- * The build process as a numbered sequence. Stages sit on hairlines in a
- * three-column grid; the number carries the ordering, so no connectors,
- * arrows or icons are needed.
+ * The build process as the agent's plan: a checklist that gets ticked off in
+ * pencil as the reader scrolls down it.
  */
 export default function SystemWorkflow() {
   return (
     <Section id="process">
       <SectionHeading
-        index="06"
-        label="Process"
-        title="From idea to production"
-        lede="The same pipeline runs on every engagement. It is what keeps delivery predictable when the requirements are not."
+        stage="process"
+        title="Plan first. Then build."
+        lede="The same plan runs on every engagement. It is what keeps delivery predictable when the requirements are not."
+        note="the boring releases are the goal"
       />
 
       <SectionBody className="mt-14">
-        <ol className="grid border-t border-line sm:grid-cols-2 lg:grid-cols-3">
-          {workflowStages.map((stage, index) => (
+        <ol className="border-t border-line">
+          {workflowStages.map((stage) => (
             <Reveal
               key={stage.step}
               as="li"
-              delay={(index % 3) * 0.05}
-              className="group border-b border-line py-7 sm:px-6 sm:odd:pl-0 lg:px-8 lg:[&:nth-child(3n+1)]:pl-0"
+              amount={0.5}
+              className="grid grid-cols-[2rem_minmax(0,1fr)] gap-x-5 border-b border-line py-6 md:grid-cols-[2rem_minmax(0,17rem)_minmax(0,1fr)] md:gap-x-6"
             >
-              <span className="font-mono text-[0.7rem] text-ink-faint transition-colors group-hover:text-accent">
-                {stage.step}
+              <span className="sketch relative mt-0.5 block h-6 w-6">
+                <Scribble
+                  shape="check"
+                  delay={0.2}
+                  duration={0.35}
+                  strokeWidth={3}
+                  onDraw={() => playSound('tick')}
+                  className="absolute -left-0.5 -top-1.5 h-8 w-8"
+                />
               </span>
-              <h3 className="mt-3 text-[0.95rem] font-medium leading-snug text-ink-strong">
+              <h3 className="text-[0.98rem] font-medium leading-snug text-ink-strong">
                 {stage.title}
               </h3>
-              <p className="mt-2 max-w-[38ch] text-[0.85rem] leading-relaxed text-ink-muted">
+              <p className="col-start-2 mt-1.5 max-w-[52ch] text-[0.87rem] leading-relaxed text-ink-muted md:col-start-3 md:mt-0">
                 {stage.body}
               </p>
             </Reveal>

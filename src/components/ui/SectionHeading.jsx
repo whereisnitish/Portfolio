@@ -1,13 +1,15 @@
 import Reveal from './Reveal'
+import Note from './Note'
+import { stageDetails } from '../../data/run'
 
 /**
- * Editorial section head: a numbered mono label in a narrow left column, the
- * title and lede in the main column. Every section uses this, which is what
- * gives the page its rhythm now that there are no bands or cards.
- *
- * On large screens the label sticks while its section scrolls past.
+ * Head of a run stage: the step and its function call in a narrow left column,
+ * the title and lede in the main column. On large screens the step label sticks
+ * while its section scrolls past, like a trace following the reader.
  */
-export default function SectionHeading({ index, label, title, lede, className = '' }) {
+export default function SectionHeading({ stage, title, lede, note, className = '' }) {
+  const details = stageDetails[stage]
+
   return (
     <div
       className={[
@@ -16,16 +18,19 @@ export default function SectionHeading({ index, label, title, lede, className = 
       ].join(' ')}
     >
       <Reveal>
-        <p className="label lg:sticky lg:top-28">
-          {index && <span className="text-ink-muted">{index}</span>}
-          {index && label && <span className="mx-2 opacity-40">/</span>}
-          {label}
-        </p>
+        <div className="lg:sticky lg:top-28">
+          <p className="label">
+            <span className="text-accent">{details.step}</span>
+            <span className="mx-2 opacity-50">/</span>
+            {details.name}
+          </p>
+          <p className="mt-1.5 font-mono text-[0.7rem] text-ink-faint">{details.call}</p>
+        </div>
       </Reveal>
 
       <div>
         <Reveal delay={0.05}>
-          <h2 className="max-w-2xl text-[1.75rem] font-semibold leading-[1.2] tracking-[-0.02em] sm:text-4xl">
+          <h2 className="max-w-2xl text-[2.1rem] font-semibold leading-[1.1] sm:text-5xl">
             {title}
           </h2>
         </Reveal>
@@ -37,6 +42,8 @@ export default function SectionHeading({ index, label, title, lede, className = 
             </p>
           </Reveal>
         )}
+
+        {note && <Note className="mt-4">{note}</Note>}
       </div>
     </div>
   )

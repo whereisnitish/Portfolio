@@ -14,10 +14,10 @@ export default function ImpactMetrics() {
   return (
     <Section id="impact">
       <SectionHeading
-        index="02"
-        label="Impact"
-        title="Measured in production, not in demos"
-        lede="Figures from shipped systems — latency budgets defended, token spend cut, release cycles shortened."
+        stage="impact"
+        title="Run complete. Here's the output."
+        lede="Figures from shipped systems: latency budgets defended, token spend cut, release cycles shortened."
+        note="measured in production, not in demos"
       />
 
       <SectionBody className="mt-14">
@@ -40,7 +40,7 @@ function Metric({ metric, index, active }) {
   return (
     <Reveal
       delay={(index % 3) * 0.05}
-      className="border-b border-line px-0 py-7 sm:px-6 sm:odd:pl-0 lg:px-8 lg:[&:nth-child(3n+1)]:pl-0"
+      className="border-b border-line py-7 sm:pr-6 lg:pr-8"
     >
       <div className="flex items-baseline gap-0.5 text-ink-strong">
         <span className="text-[2.75rem] font-semibold leading-none tracking-[-0.03em] tabular-nums">

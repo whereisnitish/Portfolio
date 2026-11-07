@@ -7,10 +7,9 @@ export default function Experience() {
   return (
     <Section id="experience">
       <SectionHeading
-        index="05"
-        label="Experience"
-        title="Where the systems got built"
-        lede="Three years owning delivery end to end — architecture, implementation, client conversations, and the parts that only surface after launch."
+        stage="experience"
+        title="The log so far."
+        lede="Owning delivery end to end: architecture, implementation, client conversations, and the parts that only surface after launch."
       />
 
       <SectionBody className="mt-14">

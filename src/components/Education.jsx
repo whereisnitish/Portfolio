@@ -10,7 +10,7 @@ import { beyondCode, education } from '../data/profile'
 export default function Education() {
   return (
     <Section id="education">
-      <SectionHeading index="07" label="Background" title="Education & interests" />
+      <SectionHeading stage="education" title="Long-term memory." />
 
       <SectionBody className="mt-14">
         <div className="grid gap-14 lg:grid-cols-2 lg:gap-16">

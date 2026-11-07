@@ -6,9 +6,14 @@ export default function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="shell flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:justify-between">
-        <p className="label normal-case tracking-normal">
-          © {year} {profile.name} · {profile.role}
-        </p>
+        <div>
+          <p className="font-mono text-[0.72rem] text-ink-muted">
+            <span className="text-accent">exit 0</span> · waiting on your prompt
+          </p>
+          <p className="label mt-2 normal-case tracking-normal">
+            © {year} {profile.name} · {profile.role}
+          </p>
+        </div>
 
         <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <a
@@ -34,7 +39,7 @@ export default function Footer() {
             Email
           </a>
           <a href="#home" className="label transition-colors hover:text-ink-strong">
-            Top
+            Run it again
           </a>
         </nav>
       </div>

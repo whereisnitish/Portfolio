@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react'
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery'
 
 /**
- * System flow diagram: User → AI Agent → LLM → Tools → APIs → Database.
- *
- * Drawn as a wireframe — 1px rules, hairline boxes, no fills or glows. The
- * accent walks the path one edge at a time so the diagram reads as something
- * executing, without any decorative motion.
+ * The loop this page acts out: User → AI Agent → LLM → Tools → APIs → GPU.
  *
  * Geometry lives in a 0–100 space shared by the SVG edge layer (viewBox
  * 0 0 100 100, non-uniform scale) and the HTML node layer (left/top
@@ -18,7 +14,7 @@ const NODES = {
   llm: { label: 'LLM', meta: 'reasoning', x: 20, y: 57 },
   tools: { label: 'Tools', meta: 'MCP', x: 80, y: 57 },
   apis: { label: 'APIs', meta: 'FastAPI', x: 80, y: 87 },
-  db: { label: 'Database', meta: 'Postgres', x: 20, y: 87 },
+  gpu: { label: 'GPU', meta: 'compute', x: 20, y: 87 },
 }
 
 /** Edges in execution order; `via` routes an L-shaped connector. */
@@ -27,7 +23,7 @@ const EDGES = [
   { from: 'agent', to: 'llm', via: { x: 20, y: 31 } },
   { from: 'llm', to: 'tools' },
   { from: 'tools', to: 'apis' },
-  { from: 'apis', to: 'db' },
+  { from: 'apis', to: 'gpu' },
 ]
 
 const STEP_MS = 1400
@@ -37,7 +33,7 @@ export default function HeroVisual() {
   const [step, setStep] = useState(0)
 
   useEffect(() => {
-    if (reduceMotion) return
+    if (reduceMotion) return undefined
     const timer = setInterval(() => setStep((s) => (s + 1) % EDGES.length), STEP_MS)
     return () => clearInterval(timer)
   }, [reduceMotion])
@@ -69,11 +65,12 @@ export default function HeroVisual() {
                 points={points}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1"
+                strokeWidth={isActive ? 2 : 1.25}
+                strokeDasharray={isActive ? undefined : '4 4'}
                 vectorEffect="non-scaling-stroke"
                 className={[
                   'transition-colors duration-500',
-                  isActive ? 'text-accent' : 'text-ink-faint/45',
+                  isActive ? 'text-accent' : 'text-ink-faint/60',
                 ].join(' ')}
               />
             )
@@ -89,10 +86,8 @@ export default function HeroVisual() {
               style={{ left: `${node.x}%`, top: `${node.y}%` }}
             >
               <div
-                className={[
-                  'flex min-w-[92px] flex-col items-center gap-0.5 border bg-canvas px-3 py-2 transition-colors duration-500',
-                  isActive ? 'border-accent' : 'border-line-strong',
-                ].join(' ')}
+                className="sketch flex min-w-[92px] flex-col items-center gap-0.5 bg-surface px-3 py-2 transition-colors duration-500"
+                style={isActive ? { borderColor: 'rgb(var(--accent))' } : undefined}
               >
                 <span
                   className={[
@@ -110,10 +105,6 @@ export default function HeroVisual() {
           )
         })}
       </div>
-
-      <p className="mt-6 border-t border-line pt-4 label">
-        Request path · {EDGES.length} hops
-      </p>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import ArchitectureFlow from './ArchitectureFlow'
 import Reveal from './ui/Reveal'
+import Stamp from './ui/Stamp'
 
 /**
  * A project as a full-width row on a hairline, not a card: index, title and
@@ -28,10 +29,11 @@ export default function ProjectCard({ project, index }) {
 
         <span className="min-w-0">
           <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="text-lg font-medium leading-snug tracking-[-0.01em] text-ink-strong sm:text-xl">
+            <span className="font-display text-xl font-semibold leading-snug tracking-[-0.01em] text-ink-strong sm:text-2xl">
               {project.name}
             </span>
             <span className="label">{project.kicker}</span>
+            <Stamp rotate={index % 2 ? 3 : -4}>Shipped {project.year}</Stamp>
           </span>
 
           <span className="mt-2.5 block max-w-measure text-[0.92rem] leading-relaxed text-ink-muted">

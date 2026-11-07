@@ -1,12 +1,13 @@
 # Nitish Kumar — Portfolio
 
-A portfolio for a **Senior Python Developer** working across AI agents, agentic AI,
-LLM applications and production backend architecture.
+A portfolio for a **Senior AI Engineer** working across AI agents, agentic AI,
+LLM applications and GPU-based AI workloads.
 
-Minimalist and typography-led: one continuous surface, a single neutral ink scale,
-one accent colour, and hairlines instead of cards. Light and dark themes.
+The page reads as one agent run, from a prompt through to handing control back to the
+visitor, and can be switched between two worlds: a paper Notebook and a dark GPU Room.
 
-Built with **React 18 + Vite**, **Tailwind CSS**, **Framer Motion** and **Lucide React**.
+Built with **React 18 + Vite**, **Tailwind CSS**, **Framer Motion**, **Lenis** and
+**Lucide React**.
 
 ---
 
@@ -41,80 +42,100 @@ Three things to check:
    it is linked in four places, all from that one constant.
 3. **Contact details** — everything else (email, phone, LinkedIn, location) lives in
    the same `profile` object.
+4. **Contact form email** — set the SMTP variables on your host (see below), or the
+   form will show visitors an error with an "Email it instead" link.
+
+---
+
+## Contact form email
+
+The "Next prompt" form posts to `/api/contact`, which emails the message to you over
+SMTP with the visitor as Reply-To. It never sends mail to an address a visitor typed.
+
+| Where | What runs it |
+| --- | --- |
+| `npm run dev` / `npm run preview` | Vite middleware in `vite.config.js`, reading `.env` |
+| Production (Vercel) | The serverless function `api/contact.js` |
+
+Both call the same handler in `server/contact.js`.
+
+**Setup**
+
+1. Copy `.env.example` to `.env` and fill it in for local work. `.env` is git-ignored.
+2. In Vercel → Project → Settings → Environment Variables, add `SMTP_HOST`,
+   `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM` and optionally
+   `CONTACT_TO` (defaults to `SMTP_FROM`).
+3. For Gmail, `SMTP_PASSWORD` must be an App Password, not the account password.
+
+Never prefix these with `VITE_`: that would bundle them into the public JavaScript.
+
+On a host other than Vercel, wrap `handleContact` from `server/contact.js` in that
+host's function format; `api/contact.js` shows the dozen lines involved.
+
+Spam protection is a hidden honeypot field, input limits, and a best-effort limit of
+five messages per visitor every ten minutes (per server instance).
 
 ---
 
 ## Design system
 
-The whole system is small on purpose.
+### The run
 
-| | |
-| --- | --- |
-| **Surface** | One continuous ground. No bands, no cards, no background layers. |
-| **Separation** | A 1px hairline and generous whitespace. No shadows anywhere. |
-| **Colour** | One neutral ink scale (4 steps) plus one accent. |
-| **Accent** | Only for links, the active nav item, live status and the primary button. |
-| **Type** | Inter for text, JetBrains Mono for labels and metadata. |
-| **Motion** | One entrance (short fade + 12px rise) and a few purposeful state changes. |
-
-No gradients, glows, blurred blooms, textures or decorative animation. Hierarchy
-comes from weight, size and space.
-
-### Tokens
-
-Colours are CSS custom properties, so light and dark are the *same classes* with
-different values — there is not a single `dark:` variant in the components.
+Sections follow the order of `runStages` in `src/data/run.js`:
 
 ```
---bg  --bg-surface                     ground
---ink-strong  --ink-body               headings, body
---ink-muted   --ink-faint              secondary, metadata
---accent      --on-accent              the one accent, and text that sits on it
---line        --line-strong            hairlines
+00 prompt → 01 context → 02 plan → 03 tools → 04 compute → 05 execute
+          → 06 history → 07 results → 08 your turn
 ```
 
-All values live in the `@layer base` block at the top of `src/index.css`.
-`.dark` on `<html>` swaps them. Change a value there and the whole page follows.
+`RunSpine` traces progress on wide screens, and the navbar shows a progress bar on
+narrower ones. Plain nav labels (About, Tools, Work…) stay for anyone who wants to jump.
+
+### Two worlds
+
+| | Notebook (default) | GPU Room |
+| --- | --- | --- |
+| **Ground** | Warm ruled paper | Near-black dot grid |
+| **Accent** | Pencil red | Phosphor green |
+| **Headings** | Fraunces | Space Grotesk |
+| **Line work** | Uneven, hand-ruled corners | Tight 3px corners |
+
+Kalam is the handwriting in both, Inter the body text and JetBrains Mono the labels.
+
+Colours and display type are CSS custom properties, so both worlds are the *same
+classes* with different values, and the components contain no `dark:` variants. All
+values live in the `@layer base` block at the top of `src/index.css`, and `.dark` on
+`<html>` swaps them.
 
 Two rules worth keeping:
 
-- **Contrast.** `ink-body`, `ink-muted` and `ink-faint` all clear WCAG AA (4.5:1)
-  against the ground in both themes. `ink-faint` is the tightest — re-check it if
-  you lighten it.
+- **Contrast.** `ink-body`, `ink-muted`, `ink-faint` and `accent` all clear WCAG AA
+  (4.5:1) against both the ground and sheets, in both worlds. Re-check them if you
+  change a value.
 - **Opacity modifiers.** Tailwind only emits opacity steps of 5 (`/10`, `/45`).
   Something like `bg-accent/12` silently produces no CSS at all.
 
+### Switching worlds
+
+**The Notebook is the default.** The OS `prefers-color-scheme` setting is deliberately
+not consulted. The GPU Room applies only once someone picks it, and that choice is
+remembered in `localStorage`.
+
+`src/hooks/useTheme.jsx` owns the state, keeps `<meta name="theme-color">` in sync and
+runs the circular wipe. Browsers without view transitions switch instantly. An inline
+script in `index.html` applies the class before first paint, so there is no flash on load.
+
+### Motion and sound
+
+Reduced-motion visitors get smooth scrolling, the pinned GPU stage, typing and wipes
+turned off, with all content visible straight away. Sound effects are synthesised in
+`src/lib/sound.js` and stay off until the visitor enables them.
+
 ### Layout
 
-Every section uses the same editorial grid: a numbered mono label in a narrow left
-column (sticky on desktop), title and content in the main column.
-
-```
-10rem          main column
-─────────────  ───────────────────────────────
-04 / WORK      Systems designed, built
-               and shipped
-
-               01  Autonomous Browser Agent
-               02  AI-Powered Conversational Agent
-```
-
-`SectionHeading` renders the head; `SectionBody` aligns content to the same left
-edge beneath it.
-
-### The theme toggle
-
-**Light is the default.** The OS `prefers-color-scheme` setting is deliberately not
-consulted — every first-time visitor gets the light theme, including those whose
-system is set to dark. Dark applies only once someone picks it with the toggle, and
-that choice is remembered in `localStorage` from then on.
-
-`src/hooks/useTheme.jsx` owns the state and keeps `<meta name="theme-color">` in
-sync. An inline script in `index.html` applies the class before first paint, so
-there is no flash on load.
-
-To follow the OS instead, read `prefers-color-scheme` in that inline script when
-nothing is stored, and add a `matchMedia` listener in the provider.
+Every section uses the same grid: the step and function call in a narrow left column
+(sticky on desktop), title and content in the main column. `SectionHeading` renders the
+head; `SectionBody` aligns content to the same left edge beneath it.
 
 ---
 
@@ -124,33 +145,42 @@ nothing is stored, and add a `matchMedia` listener in the provider.
 src/
 ├── App.jsx                     Page composition — section order
 ├── main.jsx                    React entry point (wraps the app in ThemeProvider)
-├── index.css                   Theme tokens, shared component classes
+├── index.css                   Tokens for both worlds, shared component classes
+├── lib/
+│   └── sound.js                Synthesised sound effects, off by default
 │
 ├── components/
-│   ├── Navbar.jsx              Sticky nav, scroll-spy, mobile sheet, theme toggle
-│   ├── Hero.jsx                Name, rotating specialisation, calls to action
-│   ├── HeroVisual.jsx          Wireframe diagram of an agent request path
-│   ├── About.jsx               Narrative, facts, system log
-│   ├── ImpactMetrics.jsx       Animated counters on a hairline grid
-│   ├── Expertise.jsx           Technologies as a definition list
-│   ├── Projects.jsx            Selected work
+│   ├── Navbar.jsx              Sticky nav, scroll-spy, progress bar, mobile sheet
+│   ├── RunSpine.jsx            Fixed trace of the run's stages on wide screens
+│   ├── Hero.jsx                00 prompt: typed prompt, headline, calls to action
+│   ├── HeroVisual.jsx          Diagram of an agent request path
+│   ├── About.jsx               01 context: narrative and quick facts
+│   ├── Education.jsx           01 memory: education and interests
+│   ├── SystemWorkflow.jsx      02 plan: checklist ticked off while scrolling
+│   ├── Expertise.jsx           03 tools: technologies as a definition list
+│   ├── Compute.jsx             04 compute: pinned scroll stage for GPU work
+│   ├── TensorGrid.jsx          Canvas illustration used by Compute
+│   ├── Projects.jsx            05 execute: selected work
 │   ├── ProjectCard.jsx         Expandable project row
 │   ├── ArchitectureFlow.jsx    Numbered request flow inside a project row
-│   ├── Experience.jsx          Role, summary, grouped responsibilities
-│   ├── SystemWorkflow.jsx      "From idea to production" — seven stages
-│   ├── Education.jsx           Education and interests
-│   ├── Contact.jsx             Closing statement and channel index
+│   ├── Experience.jsx          06 history: role and responsibilities
+│   ├── ImpactMetrics.jsx       07 results: animated counters
+│   ├── Contact.jsx             08 your turn: prompt composer and channel index
 │   ├── VoiceAgent.jsx          Floating Vapi call button (SDK lazy-loaded)
 │   ├── Footer.jsx
 │   └── ui/
 │       ├── Section.jsx         Section shell: anchor, rhythm, hairline, container
-│       ├── SectionHeading.jsx  The editorial grid head (+ SectionBody)
-│       ├── Reveal.jsx          The single entrance animation
-│       ├── TerminalPanel.jsx   Typewriter system log
-│       └── ThemeToggle.jsx     Light/dark switch
+│       ├── SectionHeading.jsx  Stage heading (+ SectionBody)
+│       ├── Reveal.jsx          The standard entrance animation
+│       ├── Scribble.jsx        Pencil strokes that draw themselves
+│       ├── Stamp.jsx           Rubber stamp that lands on scroll
+│       ├── Note.jsx            Handwritten margin note
+│       ├── WorldSwitch.jsx     Notebook / GPU Room switch
+│       └── SoundToggle.jsx     Sound effects on/off
 │
 ├── data/                       All copy and content — edit here, not in components
-│   ├── profile.js              Identity, about copy, education, interests
+│   ├── run.js                  The run's stages, in page order
+│   ├── profile.js              Identity, about copy, hero prompt, GPU lines, education
 │   ├── metrics.js              Impact figures
 │   ├── skills.js               Technology ecosystem
 │   ├── projects.js             Featured projects (incl. architecture steps)
@@ -160,8 +190,9 @@ src/
 │   └── navigation.js           Nav links and scroll-spy targets
 │
 └── hooks/
-    ├── useTheme.jsx            Theme state: light default, explicit choice, persistence
-    ├── useActiveSection.js     Scroll-spy for the navbar
+    ├── useTheme.jsx            World state, persistence and the circular wipe
+    ├── useSmoothScroll.js      Lenis smooth scrolling, off for reduced motion
+    ├── useActiveSection.js     Scroll-spy for the navbar and spine
     ├── useCountUp.js           Counter animation, reduced-motion aware
     └── useMediaQuery.js        Media query and reduced-motion helpers
 ```
@@ -181,10 +212,10 @@ skills, edit the matching file in `src/data/` — no component changes needed.
 | Technologies and categories | `src/data/skills.js` |
 | Projects, stacks, results, architecture steps | `src/data/projects.js` |
 | Work history | `src/data/experience.js` |
-| Colours, both themes | `src/index.css` |
-| Section order | `src/App.jsx` |
+| Colours and display fonts, both worlds | `src/index.css` |
+| Section order | `src/App.jsx` and `runStages` in `src/data/run.js` |
 | Fonts, spacing, token-to-class mapping | `tailwind.config.js` |
-| System log transcript | `DEFAULT_LINES` in `src/components/ui/TerminalPanel.jsx` |
+| Hero prompt, GPU stage lines, contact suggestions | `src/data/profile.js` |
 | Hero diagram nodes and edges | `NODES` / `EDGES` in `src/components/HeroVisual.jsx` |
 | Voice agent IDs and button copy | `src/data/voiceAgent.js` |
 

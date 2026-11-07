@@ -7,9 +7,8 @@ export default function Projects() {
   return (
     <Section id="projects">
       <SectionHeading
-        index="04"
-        label="Selected work"
-        title="Systems designed, built and shipped"
+        stage="projects"
+        title="What actually ran."
         lede="Each of these went to production with real users, real constraints and real failure modes. Open a row for the architecture behind it."
       />
 

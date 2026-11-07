@@ -1,9 +1,9 @@
 export const profile = {
   name: 'Nitish Kumar',
-  role: 'Senior Python Developer',
-  tagline: 'Building AI Agents, Intelligent Systems & Scalable Backend Architecture',
+  role: 'Senior AI Engineer',
+  tagline: 'Building AI Agents, LLM Applications & GPU-Based AI Workloads',
   intro:
-    'I build production-grade backend systems and intelligent AI applications—from scalable APIs and microservices to autonomous AI agents, voice systems, and LLM-powered workflows.',
+    'I build production-grade AI systems—from autonomous AI agents, voice systems and LLM-powered workflows to GPU-based workloads and the scalable APIs behind them.',
   email: 'whereisnitish@gmail.com',
   phone: '+91 7543940627',
   phoneHref: '+917543940627',
@@ -21,21 +21,21 @@ export const rotatingTitles = [
   'Agentic AI',
   'LLM Applications',
   'AI Voice Agents',
-  'FastAPI Systems',
-  'Backend Architecture',
+  'GPU Workloads',
+  'AI Backend Systems',
   'Automation Workflows',
 ]
 
 export const developerProfile = [
   {
     label: 'Experience',
-    value: '3+ Years',
-    detail: 'Shipping production systems end to end',
+    value: '4+ Years',
+    detail: 'Shipping production AI systems end to end',
   },
   {
     label: 'Focus',
-    value: 'AI Systems · Backend · Automation',
-    detail: 'Agentic workflows, APIs, integrations',
+    value: 'AI Engineering · LLMs · GPU Workloads',
+    detail: 'Agentic workflows, voice agents, AI backends',
   },
   {
     label: 'Current Stack',
@@ -50,19 +50,39 @@ export const developerProfile = [
 ]
 
 export const aboutParagraphs = [
-  'I am a Senior Python Developer with 3+ years of experience designing and shipping API-driven backend systems and AI-powered products. My work sits at the intersection of two disciplines: the engineering rigour required to run services in production, and the fast-moving world of LLMs and autonomous agents.',
-  'Day to day that means building REST APIs and microservices, integrating LLMs into real product workflows, designing agentic systems that reason and use tools, and wiring AI voice agents and automation pipelines that remove manual work entirely.',
-  'I also lead client discussions and requirement gathering. Translating a vague business problem into a concrete architecture — and then into a deployed, monitored, cost-optimised system — is the part of the job I care about most.',
+  "I'm a Senior AI Engineer with 4+ years of shipping AI-powered products and the systems behind them. A clever demo is the easy part. I care about the part after it: keeping the thing reliable under real traffic, at a cost someone will actually approve.",
+  'Day to day I wire LLMs into real product workflows, design agents that reason and use tools, work on GPU-based AI tasks, and build the voice agents and automations that take manual work off people’s plates, all served through reliable APIs and microservices.',
+  'I also sit in the client conversations. Turning a vague business problem into a concrete architecture, then into something deployed, monitored and cost-optimised, is the part of the job I care about most.',
+]
+
+/** The prompt typed at the top of the hero, which starts the run. */
+export const heroPrompt = 'find me an AI engineer who ships to production'
+
+/**
+ * The lines the compute stage steps through as it scrolls.
+ * TODO: replace the last line with specifics of the GPU work (what ran, on what).
+ */
+export const computeLines = [
+  "Some work doesn't fit in an API call.",
+  'So it goes to the GPU.',
+  "I've worked on GPU-based AI tasks, alongside the agents and APIs around them.",
+]
+
+/** One-click starters for the contact composer. */
+export const contactSuggestions = [
+  'We need an AI agent that…',
+  'We want to ship an LLM feature…',
+  'We have a GPU workload…',
 ]
 
 /** Capability chips rendered under the About copy. */
 export const capabilities = [
-  'API-driven backend systems',
   'AI-powered applications',
   'LLM-integrated systems',
-  'AI voice agents',
   'Agentic AI workflows',
-  'REST APIs & microservices',
+  'AI voice agents',
+  'GPU-based AI workloads',
+  'AI backends & APIs',
   'Automation systems',
 ]
 

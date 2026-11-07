@@ -1,22 +1,20 @@
-/** Section ids double as scroll anchors and active-state keys. */
+/** Plain-language nav for people who want to jump, not follow the run. */
 export const navLinks = [
-  { id: 'home', label: 'Home' },
   { id: 'about', label: 'About' },
-  { id: 'expertise', label: 'Expertise' },
-  { id: 'projects', label: 'Projects' },
+  { id: 'expertise', label: 'Tools' },
+  { id: 'projects', label: 'Work' },
   { id: 'experience', label: 'Experience' },
   { id: 'contact', label: 'Contact' },
 ]
 
-/** Every section observed for scroll-spy, including ones absent from the navbar. */
-export const observedSections = [
-  'home',
-  'about',
-  'impact',
-  'expertise',
-  'projects',
-  'experience',
-  'process',
-  'education',
-  'contact',
-]
+/** Which nav item to mark while a given run stage is on screen. */
+export const stageToNavLink = {
+  about: 'about',
+  process: 'about',
+  expertise: 'expertise',
+  compute: 'projects',
+  projects: 'projects',
+  experience: 'experience',
+  impact: 'experience',
+  contact: 'contact',
+}

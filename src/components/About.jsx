@@ -1,20 +1,16 @@
 import Section from './ui/Section'
 import SectionHeading, { SectionBody } from './ui/SectionHeading'
 import Reveal from './ui/Reveal'
-import TerminalPanel from './ui/TerminalPanel'
+import Note from './ui/Note'
 import { aboutParagraphs, capabilities, developerProfile } from '../data/profile'
 
 export default function About() {
   return (
-    <Section id="about" divider={false}>
-      <SectionHeading
-        index="01"
-        label="Profile"
-        title="Engineering intelligent systems that solve real problems"
-      />
+    <Section id="about">
+      <SectionHeading stage="about" title="First, some context." />
 
       <SectionBody className="mt-14">
-        <div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
+        <div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14">
           <div>
             <div className="max-w-measure space-y-5">
               {aboutParagraphs.map((paragraph, index) => (
@@ -26,9 +22,9 @@ export default function About() {
 
             <Reveal delay={0.1} className="mt-12">
               <p className="label">What I build</p>
-              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2.5">
+              <ul className="mt-5 flex flex-wrap gap-2">
                 {capabilities.map((capability) => (
-                  <li key={capability} className="text-[0.9rem] text-ink-muted">
+                  <li key={capability} className="chip text-[0.74rem]">
                     {capability}
                   </li>
                 ))}
@@ -36,10 +32,10 @@ export default function About() {
             </Reveal>
           </div>
 
-          {/* Facts as a definition list on hairlines — no card. */}
-          <div>
-            <Reveal>
-              <dl className="divide-y divide-line border-y border-line">
+          {/* The quick facts, as a sheet taped into the notebook. */}
+          <Reveal>
+            <div className="sheet rotate-[1.2deg] px-6 pb-3 pt-7">
+              <dl className="divide-y divide-line">
                 {developerProfile.map((entry) => (
                   <div key={entry.label} className="py-4">
                     <dt className="label">{entry.label}</dt>
@@ -52,12 +48,11 @@ export default function About() {
                   </div>
                 ))}
               </dl>
-            </Reveal>
-
-            <Reveal delay={0.08} className="mt-8">
-              <TerminalPanel />
-            </Reveal>
-          </div>
+            </div>
+            <Note rotate={-2} className="mt-5 text-center">
+              the short version, if you&apos;re in a hurry
+            </Note>
+          </Reveal>
         </div>
       </SectionBody>
     </Section>

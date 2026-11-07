@@ -1,29 +1,21 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useScroll } from 'framer-motion'
 import { Github, Menu, X } from 'lucide-react'
-import { navLinks, observedSections } from '../data/navigation'
+import { navLinks, stageToNavLink } from '../data/navigation'
 import { profile } from '../data/profile'
+import { runStageIds, stageDetails } from '../data/run'
 import { useActiveSection } from '../hooks/useActiveSection'
-import ThemeToggle from './ui/ThemeToggle'
-
-/** Maps the observed section back onto the nav item that should be marked. */
-const SECTION_TO_LINK = {
-  home: 'home',
-  about: 'about',
-  impact: 'about',
-  expertise: 'expertise',
-  projects: 'projects',
-  experience: 'experience',
-  process: 'experience',
-  education: 'experience',
-  contact: 'contact',
-}
+import { getLenis } from '../hooks/useSmoothScroll'
+import SoundToggle from './ui/SoundToggle'
+import WorldSwitch from './ui/WorldSwitch'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const activeSection = useActiveSection(observedSections, 140)
-  const activeLink = SECTION_TO_LINK[activeSection] ?? 'home'
+  const activeSection = useActiveSection(runStageIds, 200)
+  const activeLink = stageToNavLink[activeSection]
+  const activeStage = stageDetails[activeSection]
+  const { scrollYProgress } = useScroll()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -35,8 +27,11 @@ export default function Navbar() {
   // Lock body scroll while the mobile sheet is open.
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
+    if (menuOpen) getLenis()?.stop()
+    else getLenis()?.start()
     return () => {
       document.body.style.overflow = ''
+      getLenis()?.start()
     }
   }, [menuOpen])
 
@@ -63,13 +58,21 @@ export default function Navbar() {
         ].join(' ')}
       >
         <nav aria-label="Primary" className="shell flex h-16 items-center justify-between gap-8">
-          <a
-            href="#home"
-            className="text-sm font-semibold tracking-tight text-ink-strong"
-            aria-label="Nitish Kumar — home"
-          >
-            Nitish Kumar
-          </a>
+          <div className="flex items-baseline gap-3">
+            <a
+              href="#home"
+              className="text-sm font-semibold tracking-tight text-ink-strong"
+              aria-label="Nitish Kumar — home"
+            >
+              Nitish Kumar
+            </a>
+            {/* The spine shows this on wide screens. */}
+            {activeStage && (
+              <span className="hidden whitespace-nowrap font-mono text-[0.66rem] text-accent min-[420px]:inline xl:hidden">
+                {activeStage.step} {activeStage.name}
+              </span>
+            )}
+          </div>
 
           {/* Desktop links — the active item is marked with weight and a rule,
               not a filled pill. */}
@@ -113,14 +116,9 @@ export default function Navbar() {
               <Github className="h-[17px] w-[17px]" strokeWidth={1.6} />
             </a>
 
-            <ThemeToggle />
+            <SoundToggle />
 
-            <a
-              href={`mailto:${profile.email}`}
-              className="ml-2 hidden text-[0.82rem] font-medium text-accent transition-opacity hover:opacity-70 sm:inline"
-            >
-              Get in touch
-            </a>
+            <WorldSwitch className="ml-1" />
 
             <button
               type="button"
@@ -134,6 +132,13 @@ export default function Navbar() {
             </button>
           </div>
         </nav>
+
+        {/* How far through the run the reader is. */}
+        <motion.div
+          aria-hidden="true"
+          style={{ scaleX: scrollYProgress }}
+          className="absolute inset-x-0 -bottom-px h-[2px] origin-left bg-accent xl:hidden"
+        />
       </header>
 
       {/* Mobile sheet */}
