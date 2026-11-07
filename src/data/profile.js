@@ -4,7 +4,7 @@ export const profile = {
   tagline: 'Building AI Agents, LLM Applications & GPU-Based AI Workloads',
   intro:
     'I build production-grade AI systems—from autonomous AI agents, voice systems and LLM-powered workflows to GPU-based workloads and the scalable APIs behind them.',
-  email: 'whereisnitish@gmail.com',
+  email: 'workwithnitishk@gmail.com',
   phone: '+91 7543940627',
   phoneHref: '+917543940627',
   linkedin: 'https://www.linkedin.com/in/whereisnitish/',
